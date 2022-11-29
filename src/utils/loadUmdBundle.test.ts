@@ -1,9 +1,4 @@
-import {
-  DefaultRequestBody,
-  ResponseComposition,
-  rest,
-  RestContext,
-} from "msw";
+import { DefaultBodyType, ResponseComposition, rest, RestContext } from "msw";
 
 import { server } from "../mocks/server";
 import {
@@ -119,8 +114,8 @@ define(['myMockDep', 'myMockDep2'], (myMockDep, myMockDep2) => ({ mockExport: \`
   describe("when using a retry policy", () => {
     describe.each`
       failureReason                         | failureResponseBuilder
-      ${"server returns non 200"}           | ${(res: ResponseComposition<DefaultRequestBody>, ctx: RestContext) => res(ctx.status(400))}
-      ${"server returns an invalid module"} | ${(res: ResponseComposition<DefaultRequestBody>, ctx: RestContext) => res(ctx.status(200), ctx.text('define([], () => { throw new Error("FAILED") })'))}
+      ${"server returns non 200"}           | ${(res: ResponseComposition<DefaultBodyType>, ctx: RestContext) => res(ctx.status(400))}
+      ${"server returns an invalid module"} | ${(res: ResponseComposition<DefaultBodyType>, ctx: RestContext) => res(ctx.status(200), ctx.text('define([], () => { throw new Error("FAILED") })'))}
     `("when $failureReason", ({ failureResponseBuilder }) => {
       it("should retry and succeed", async () => {
         let count = 0;

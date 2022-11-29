@@ -1,15 +1,15 @@
-import { TinyClientFetchError } from "../errors";
-import { TinyFrontendModuleConfig } from "../types";
+import { NanoClientFetchError } from "../errors";
+import { NanoFrontendModuleConfig } from "../types";
 import { retry, RetryPolicy } from "./retry";
 
-interface GetTinyFrontendModuleConfigProps
-  extends GetTinyFrontendModuleConfigBaseProps {
+interface GetNanoFrontendModuleConfigProps
+  extends GetNanoFrontendModuleConfigBaseProps {
   cacheTtlInMs?: number;
   retryPolicy?: RetryPolicy;
 }
 
 interface ModuleConfigCacheItem {
-  promise: Promise<TinyFrontendModuleConfig>;
+  promise: Promise<NanoFrontendModuleConfig>;
   timestamp: number;
 }
 
@@ -26,17 +26,17 @@ export const moduleConfigPromiseCacheMap = new Map<
   ModuleConfigCacheItem
 >();
 
-export const getTinyFrontendModuleConfig = async ({
-  tinyFrontendName,
-  contractVersion,
+export const getNanoFrontendModuleConfig = async ({
+  name,
+  version,
   hostname,
   retryPolicy = {
     maxRetries: 0,
     delayInMs: 0,
   },
   cacheTtlInMs,
-}: GetTinyFrontendModuleConfigProps): Promise<TinyFrontendModuleConfig> => {
-  const cacheKey = `${tinyFrontendName}-${contractVersion}-${hostname}`;
+}: GetNanoFrontendModuleConfigProps): Promise<NanoFrontendModuleConfig> => {
+  const cacheKey = `${name}-${version}-${hostname}`;
 
   const cacheItem = moduleConfigPromiseCacheMap.get(cacheKey);
   if (
@@ -51,9 +51,9 @@ export const getTinyFrontendModuleConfig = async ({
 
   const moduleConfigPromise = retry(
     () =>
-      getTinyFrontendModuleConfigBase({
-        tinyFrontendName,
-        contractVersion: contractVersion,
+      getNanoFrontendModuleConfigBase({
+        name,
+        version: version,
         hostname,
       }),
     retryPolicy
@@ -70,49 +70,49 @@ export const getTinyFrontendModuleConfig = async ({
   return moduleConfigPromise;
 };
 
-interface GetTinyFrontendModuleConfigBaseProps {
-  tinyFrontendName: string;
-  contractVersion: string;
+interface GetNanoFrontendModuleConfigBaseProps {
+  name: string;
+  version: string;
   hostname: string;
   retryPolicy?: RetryPolicy;
 }
 
-const getTinyFrontendModuleConfigBase = async ({
-  tinyFrontendName,
-  contractVersion,
+const getNanoFrontendModuleConfigBase = async ({
+  name,
+  version,
   hostname,
-}: GetTinyFrontendModuleConfigBaseProps): Promise<TinyFrontendModuleConfig> => {
+}: GetNanoFrontendModuleConfigBaseProps): Promise<NanoFrontendModuleConfig> => {
   let response;
 
   try {
     response = await fetch(
-      `${hostname}/tiny/latest/${tinyFrontendName}/${contractVersion}`,
+      `${hostname}/nano/latest/${name}/${version}`,
       { mode: "cors" }
     );
   } catch (err) {
-    throw new TinyClientFetchError(
-      tinyFrontendName,
-      contractVersion,
+    throw new NanoClientFetchError(
+      name,
+      version,
       `with error: ${(err as Record<string, string>)?.message}`
     );
   }
 
   if (response.status >= 400) {
-    throw new TinyClientFetchError(
-      tinyFrontendName,
-      contractVersion,
+    throw new NanoClientFetchError(
+      name,
+      version,
       `with status ${response.status} and body '${await response.text()}'`
     );
   }
 
-  let responseJson: TinyFrontendModuleConfig;
+  let responseJson: NanoFrontendModuleConfig;
 
   try {
     responseJson = await response.json();
   } catch (err) {
-    throw new TinyClientFetchError(
-      tinyFrontendName,
-      contractVersion,
+    throw new NanoClientFetchError(
+      name,
+      version,
       `while getting JSON body`
     );
   }

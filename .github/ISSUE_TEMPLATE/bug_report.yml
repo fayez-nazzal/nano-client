@@ -6,14 +6,14 @@ body:
       value: |
         Thank you for reporting an issue :pray:.
 
-        This issue tracker is for reporting bugs found in `tiny-client` (https://github.com/tiny-frontend/tiny-client).
+        This issue tracker is for reporting bugs found in `nano-client` (https://github.com/nano-frontend/nano-client).
         If you have a question about how to achieve something and are struggling, please post a question
-        inside of `tiny-client` Discussions tab: https://github.com/tiny-frontend/tiny-client/discussions
+        inside of `nano-client` Discussions tab: https://github.com/nano-frontend/nano-client/discussions
 
         Before submitting a new bug/issue, please check the links below to see if there is a solution or question posted there already:
-         - `tiny-client` Issues tab: https://github.com/tiny-frontend/tiny-client/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc
-         - `tiny-client` closed issues tab: https://github.com/tiny-frontend/tiny-client/issues?q=is%3Aissue+sort%3Aupdated-desc+is%3Aclosed
-         - `tiny-client` Discussions tab: https://github.com/tiny-frontend/tiny-client/discussions
+         - `nano-client` Issues tab: https://github.com/nano-frontend/nano-client/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc
+         - `nano-client` closed issues tab: https://github.com/nano-frontend/nano-client/issues?q=is%3Aissue+sort%3Aupdated-desc+is%3Aclosed
+         - `nano-client` Discussions tab: https://github.com/nano-frontend/nano-client/discussions
 
         The more information you fill in, the better the community can help you.
   - type: textarea
@@ -30,7 +30,7 @@ body:
       description: |
         Which website or app were you using when the bug happened?
         Note:
-        - Your bug will may get fixed much faster if we can run your code and it doesn't have dependencies other than the `tiny-client` npm package.
+        - Your bug will may get fixed much faster if we can run your code and it doesn't have dependencies other than the `nano-client` npm package.
         - To create a shareable code example you can use Stackblitz (https://stackblitz.com/). Please no localhost URLs.
         - Please read these tips for providing a minimal example: https://stackoverflow.com/help/mcve.
       placeholder: |

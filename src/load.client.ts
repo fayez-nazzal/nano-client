@@ -1,33 +1,33 @@
-import { TinyClientLoadBundleError } from "./errors";
-import { LoadTinyFrontendOptions, TinyFrontendModuleConfig } from "./types";
-import { getTinyFrontendModuleConfig } from "./utils/getTinyFrontendModuleConfig";
+import { NanoClientLoadBundleError } from "./errors";
+import { LoadNanoFrontendOptions, NanoFrontendModuleConfig } from "./types";
+import { getNanoFrontendModuleConfig } from "./utils/getNanoFrontendModuleConfig";
 import { loadUmdBundleClientWithCache } from "./utils/loadUmdBundle";
 
-export const loadTinyFrontendClient = async <T>({
+export const loadNanoFrontendClient = async <T>({
   name,
-  contractVersion,
-  tinyApiEndpoint,
+  version,
+  nanoApiEndpoint,
   dependenciesMap = {},
   loadingOptions = {},
-}: LoadTinyFrontendOptions): Promise<T> => {
+}: LoadNanoFrontendOptions): Promise<T> => {
   const { retryPolicy, cacheTtlInMs = 2 * 60 * 1_000 } = loadingOptions;
 
-  const tinyFrontendModuleConfigFromSsr = (
-    window as unknown as Record<string, TinyFrontendModuleConfig | undefined>
-  )[`tinyFrontend${name}Config`];
+  const nanoFrontendModuleConfigFromSsr = (
+    window as unknown as Record<string, NanoFrontendModuleConfig | undefined>
+  )[`nanoFrontend${name}Config`];
 
-  const tinyFrontendModuleConfig =
-    tinyFrontendModuleConfigFromSsr ??
-    (await getTinyFrontendModuleConfig({
-      tinyFrontendName: name,
-      contractVersion,
-      hostname: tinyApiEndpoint,
+  const nanoFrontendModuleConfig =
+    nanoFrontendModuleConfigFromSsr ??
+    (await getNanoFrontendModuleConfig({
+      name: name,
+      version,
+      hostname: nanoApiEndpoint,
       retryPolicy,
       cacheTtlInMs,
     }));
 
-  if (tinyFrontendModuleConfig.cssBundle) {
-    const cssBundleUrl = `${tinyApiEndpoint}/tiny/bundle/${tinyFrontendModuleConfig.cssBundle}`;
+  if (nanoFrontendModuleConfig.cssBundle) {
+    const cssBundleUrl = `${nanoApiEndpoint}/nano/bundle/${nanoFrontendModuleConfig.cssBundle}`;
     if (!hasStylesheet(cssBundleUrl)) {
       const cssElement = document.createElement("link");
       cssElement.rel = "stylesheet";
@@ -38,15 +38,15 @@ export const loadTinyFrontendClient = async <T>({
 
   try {
     return await loadUmdBundleClientWithCache({
-      bundleUrl: `${tinyApiEndpoint}/tiny/bundle/${tinyFrontendModuleConfig.umdBundle}`,
-      tinyFrontendName: name,
+      bundleUrl: `${nanoApiEndpoint}/nano/bundle/${nanoFrontendModuleConfig.umdBundle}`,
+      name: name,
       dependenciesMap,
-      baseCacheKey: `${name}-${contractVersion}`,
+      baseCacheKey: `${name}-${version}`,
       retryPolicy,
     });
   } catch (err) {
     console.error(err);
-    throw new TinyClientLoadBundleError(name);
+    throw new NanoClientLoadBundleError(name);
   }
 };
 

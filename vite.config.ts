@@ -5,8 +5,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: "./src/index.ts",
-      name: "tinyClient",
-      fileName: (format) => `tiny-client.${format}.js`,
+      name: "nanoClient",
+      fileName: (format) => `nano-client.${format}.js`,
     },
   },
 });

@@ -12,12 +12,12 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/tiny-client.umd.js",
-  "module": "./dist/tiny-client.es.js",
+  "main": "./dist/nano-client.umd.js",
+  "module": "./dist/nano-client.es.js",
   "exports": {
     ".": {
-      "import": "./dist/tiny-client.es.js",
-      "require": "./dist/tiny-client.umd.js"
+      "import": "./dist/nano-client.es.js",
+      "require": "./dist/nano-client.umd.js"
     }
   },
   "devDependencies": {

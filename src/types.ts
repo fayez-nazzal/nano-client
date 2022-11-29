@@ -5,20 +5,20 @@ export interface LoadingOptions {
   retryPolicy?: RetryPolicy;
 }
 
-export interface LoadTinyFrontendOptions {
+export interface LoadNanoFrontendOptions {
   name: string;
-  contractVersion: string;
-  tinyApiEndpoint: string;
+  version: string;
+  nanoApiEndpoint: string;
   dependenciesMap?: Record<string, unknown>;
   loadingOptions?: LoadingOptions;
 }
 
-export interface TinyFrontendModuleConfig {
+export interface NanoFrontendModuleConfig {
   umdBundle: string;
   cssBundle?: string;
 }
 
-export interface TinyFrontendSsrConfig {
+export interface NanoFrontendSsrConfig {
   jsBundle: string;
   moduleConfigScript: string;
   cssBundle?: string;

@@ -11,7 +11,7 @@ export const umdBundlesPromiseCacheMap = new Map<string, UmdBundleCacheItem>();
 
 interface LoadUmdBundleWithCacheProps {
   bundleUrl: string;
-  tinyFrontendName: string;
+  name: string;
   dependenciesMap: Record<string, unknown>;
   baseCacheKey: string;
   retryPolicy?: RetryPolicy;
@@ -35,7 +35,7 @@ export const loadUmdBundleClientWithCache = <T>(
 
 const loadUmdBundleWithCache = async <T>({
   bundleUrl,
-  tinyFrontendName,
+  name,
   dependenciesMap,
   baseCacheKey,
   bundleLoader,
@@ -56,7 +56,7 @@ const loadUmdBundleWithCache = async <T>({
       bundleLoader({
         bundleUrl,
         dependenciesMap,
-        tinyFrontendName,
+        name,
       }),
     retryPolicy
   ).catch((err) => {
@@ -76,7 +76,7 @@ type BundleLoader<T> = (props: BundleLoaderProps) => Promise<T>;
 
 interface BundleLoaderProps {
   bundleUrl: string;
-  tinyFrontendName: string;
+  name: string;
   dependenciesMap: Record<string, unknown>;
 }
 
@@ -138,7 +138,7 @@ const evalUmdBundle = <T>(
 
 const bundleLoaderClient = async <T>({
   bundleUrl,
-  tinyFrontendName,
+  name,
   dependenciesMap,
 }: BundleLoaderProps): Promise<T> => {
   const script = document.createElement("script");
@@ -147,7 +147,7 @@ const bundleLoaderClient = async <T>({
   const loadPromise = new Promise<T>((resolve, reject) => {
     script.addEventListener("load", () => {
       resolve(
-        (window.tinyFrontendExports as Record<string, T>)[tinyFrontendName]
+        (window.nanoFrontendExports as Record<string, T>)[name]
       );
     });
     script.addEventListener("error", (event) => {
@@ -159,8 +159,8 @@ const bundleLoaderClient = async <T>({
     });
   });
 
-  window.tinyFrontendDeps = {
-    ...window.tinyFrontendDeps,
+  window.nanoFrontendDeps = {
+    ...window.nanoFrontendDeps,
     ...dependenciesMap,
   };
 
@@ -176,7 +176,7 @@ declare global {
   ): void;
 
   interface Window {
-    tinyFrontendDeps: Record<string, unknown>;
-    tinyFrontendExports: Record<string, unknown>;
+    nanoFrontendDeps: Record<string, unknown>;
+    nanoFrontendExports: Record<string, unknown>;
   }
 }

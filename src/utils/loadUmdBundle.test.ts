@@ -24,7 +24,7 @@ describe("[loadUmdBundle]", () => {
     );
 
     const umdBundle = await loadUmdBundleServerWithCache<MockBundle>({
-      tinyFrontendName: "mockTinyFrontendName",
+      name: "mockName",
       bundleUrl: "https://mock.hostname/api/mockBundle.js",
       dependenciesMap: {},
       baseCacheKey: "bundle-1.0.0",
@@ -46,7 +46,7 @@ define(['myMockDep', 'myMockDep2'], (myMockDep, myMockDep2) => ({ mockExport: \`
     );
 
     const umdBundle = await loadUmdBundleServerWithCache<MockBundle>({
-      tinyFrontendName: "mockTinyFrontendName",
+      name: "mockName",
       bundleUrl: "https://mock.hostname/api/mockBundle.js",
       dependenciesMap: {
         myMockDep: "MOCK_DEP",
@@ -73,7 +73,7 @@ define(['myMockDep', 'myMockDep2'], (myMockDep, myMockDep2) => ({ mockExport: \`
 
     await expect(
       loadUmdBundleServerWithCache<MockBundle>({
-        tinyFrontendName: "mockTinyFrontendName",
+        name: "mockName",
         bundleUrl: "https://mock.hostname/api/mockBundle.js",
         dependenciesMap: {},
         baseCacheKey: "bundle-1.0.0",
@@ -101,7 +101,7 @@ define(['myMockDep', 'myMockDep2'], (myMockDep, myMockDep2) => ({ mockExport: \`
 
         await expect(
           loadUmdBundleServerWithCache<MockBundle>({
-            tinyFrontendName: "mockTinyFrontendName",
+            name: "mockName",
             bundleUrl: "https://mock.hostname/api/mockBundle.js",
             dependenciesMap: {},
             baseCacheKey: "bundle-1.0.0",
@@ -133,7 +133,7 @@ define(['myMockDep', 'myMockDep2'], (myMockDep, myMockDep2) => ({ mockExport: \`
         );
 
         const umdBundle = await loadUmdBundleServerWithCache<MockBundle>({
-          tinyFrontendName: "mockTinyFrontendName",
+          name: "mockName",
           bundleUrl: "https://mock.hostname/api/mockBundle.js",
           dependenciesMap: {},
           retryPolicy: {
@@ -150,7 +150,7 @@ define(['myMockDep', 'myMockDep2'], (myMockDep, myMockDep2) => ({ mockExport: \`
 
   describe("when using cache", () => {
     const mockLoadUmdBundleServerWithCacheOptions = {
-      tinyFrontendName: "mockTinyFrontendName",
+      name: "mockName",
       bundleUrl: "https://mock.hostname/api/mockBundle.js",
       dependenciesMap: {},
       baseCacheKey: "bundle-1.0.0",

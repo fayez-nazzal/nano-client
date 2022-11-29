@@ -1,19 +1,19 @@
-export class TinyClientFetchError extends Error {
+export class NanoClientFetchError extends Error {
   constructor(
-    tinyFrontendName: string,
-    contractVersion: string,
+    name: string,
+    version: string,
     message: string
   ) {
     super(
-      `Failed to fetch tiny frontend ${tinyFrontendName} version ${contractVersion} from API, ${message}`
+      `Failed to fetch nano frontend ${name} version ${version} from API, ${message}`
     );
-    this.name = "TinyClientFetchError";
+    this.name = "NanoClientFetchError";
   }
 }
 
-export class TinyClientLoadBundleError extends Error {
-  constructor(tinyFrontendName: string) {
-    super(`Failed to load script for tiny frontend ${tinyFrontendName}`);
-    this.name = "TinyClientLoadBundleError";
+export class NanoClientLoadBundleError extends Error {
+  constructor(name: string) {
+    super(`Failed to load script for nano frontend ${name}`);
+    this.name = "NanoClientLoadBundleError";
   }
 }

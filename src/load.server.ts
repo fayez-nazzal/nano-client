@@ -1,69 +1,69 @@
 import "@ungap/global-this";
 
-import { TinyClientLoadBundleError } from "./errors";
-import { LoadTinyFrontendOptions, TinyFrontendSsrConfig } from "./types";
-import { getTinyFrontendModuleConfig } from "./utils/getTinyFrontendModuleConfig";
+import { NanoClientLoadBundleError } from "./errors";
+import { LoadNanoFrontendOptions, NanoFrontendSsrConfig } from "./types";
+import { getNanoFrontendModuleConfig } from "./utils/getNanoFrontendModuleConfig";
 import { loadUmdBundleServerWithCache } from "./utils/loadUmdBundle";
 
-export interface TinyFrontendServerResponse<T> {
-  tinyFrontend: T;
-  tinyFrontendStringToAddToSsrResult: string;
-  tinyFrontendSsrConfig: TinyFrontendSsrConfig;
+export interface NanoFrontendServerResponse<T> {
+  nanoFrontend: T;
+  nanoFrontendStringToAddToSsrResult: string;
+  nanoFrontendSsrConfig: NanoFrontendSsrConfig;
 }
 
-export const loadTinyFrontendServer = async <T>({
+export const loadNanoFrontendServer = async <T>({
   name,
-  contractVersion,
-  tinyApiEndpoint,
+  version,
+  nanoApiEndpoint,
   dependenciesMap = {},
   loadingOptions = {},
-}: LoadTinyFrontendOptions): Promise<TinyFrontendServerResponse<T>> => {
+}: LoadNanoFrontendOptions): Promise<NanoFrontendServerResponse<T>> => {
   const { retryPolicy, cacheTtlInMs = 2 * 60 * 1_000 } = loadingOptions;
 
-  const tinyFrontendModuleConfig = await getTinyFrontendModuleConfig({
-    tinyFrontendName: name,
-    contractVersion,
-    hostname: tinyApiEndpoint,
+  const nanoFrontendModuleConfig = await getNanoFrontendModuleConfig({
+    name: name,
+    version,
+    hostname: nanoApiEndpoint,
     retryPolicy,
     cacheTtlInMs,
   });
 
-  const umdBundleUrl = `${tinyApiEndpoint}/tiny/bundle/${tinyFrontendModuleConfig.umdBundle}`;
-  const cssBundleUrl = tinyFrontendModuleConfig.cssBundle
-    ? `${tinyApiEndpoint}/tiny/bundle/${tinyFrontendModuleConfig.cssBundle}`
+  const umdBundleUrl = `${nanoApiEndpoint}/nano/bundle/${nanoFrontendModuleConfig.umdBundle}`;
+  const cssBundleUrl = nanoFrontendModuleConfig.cssBundle
+    ? `${nanoApiEndpoint}/nano/bundle/${nanoFrontendModuleConfig.cssBundle}`
     : undefined;
 
   try {
-    const tinyFrontend = await loadUmdBundleServerWithCache<T>({
+    const nanoFrontend = await loadUmdBundleServerWithCache<T>({
       bundleUrl: umdBundleUrl,
-      tinyFrontendName: name,
+      name: name,
       dependenciesMap,
-      baseCacheKey: `${name}-${contractVersion}`,
+      baseCacheKey: `${name}-${version}`,
       retryPolicy,
     });
 
-    const moduleConfigScript = `window["tinyFrontend${name}Config"] = ${JSON.stringify(
-      tinyFrontendModuleConfig
+    const moduleConfigScript = `window["nanoFrontend${name}Config"] = ${JSON.stringify(
+      nanoFrontendModuleConfig
     )}`;
 
-    const tinyFrontendStringToAddToSsrResult = `
+    const nanoFrontendStringToAddToSsrResult = `
 ${cssBundleUrl ? `<link rel="stylesheet" href="${cssBundleUrl}">` : ""}
 <link rel="preload" href="${umdBundleUrl}" as="script">
 <script>${moduleConfigScript}</script>`;
 
-    const tinyFrontendSsrConfig: TinyFrontendSsrConfig = {
+    const nanoFrontendSsrConfig: NanoFrontendSsrConfig = {
       cssBundle: cssBundleUrl,
       jsBundle: umdBundleUrl,
       moduleConfigScript,
     };
 
     return {
-      tinyFrontend,
-      tinyFrontendStringToAddToSsrResult,
-      tinyFrontendSsrConfig,
+      nanoFrontend,
+      nanoFrontendStringToAddToSsrResult,
+      nanoFrontendSsrConfig,
     };
   } catch (err) {
     console.error(err);
-    throw new TinyClientLoadBundleError(name);
+    throw new NanoClientLoadBundleError(name);
   }
 };

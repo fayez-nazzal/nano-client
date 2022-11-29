@@ -1,37 +1,37 @@
 import { rest } from "msw";
 
 import { server } from "../mocks/server";
-import { TinyFrontendModuleConfig } from "../types";
+import { NanoFrontendModuleConfig } from "../types";
 import {
-  getTinyFrontendModuleConfig,
+  getNanoFrontendModuleConfig,
   moduleConfigPromiseCacheMap,
-} from "./getTinyFrontendModuleConfig";
+} from "./getNanoFrontendModuleConfig";
 
-describe("[getTinyFrontendModuleConfig]", () => {
+describe("[getNanoFrontendModuleConfig]", () => {
   afterEach(() => moduleConfigPromiseCacheMap.clear());
 
   it("should fetch the latest config and return it", async () => {
     server.use(
       rest.get(
-        "https://mock.hostname/api/tiny/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
+        "https://mock.hostname/api/nano/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
         (_, res, ctx) =>
           res(
             ctx.status(200),
             ctx.json({
               umdBundle: "mockBundle.js",
               cssBundle: "mockBundle.css",
-            } as TinyFrontendModuleConfig)
+            } as NanoFrontendModuleConfig)
           )
       )
     );
 
-    const tinyFrontendModuleConfig = await getTinyFrontendModuleConfig({
-      tinyFrontendName: "MOCK_LIB_NAME",
-      contractVersion: "MOCK_LIB_VERSION",
+    const nanoFrontendModuleConfig = await getNanoFrontendModuleConfig({
+      name: "MOCK_LIB_NAME",
+      version: "MOCK_LIB_VERSION",
       hostname: "https://mock.hostname/api",
     });
 
-    expect(tinyFrontendModuleConfig).toEqual({
+    expect(nanoFrontendModuleConfig).toEqual({
       umdBundle: "mockBundle.js",
       cssBundle: "mockBundle.css",
     });
@@ -46,20 +46,20 @@ describe("[getTinyFrontendModuleConfig]", () => {
   `("should throw an error on $status", async ({ status }) => {
     server.use(
       rest.get(
-        "https://mock.hostname/api/tiny/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
+        "https://mock.hostname/api/nano/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
         (_, res, ctx) => res(ctx.status(status))
       )
     );
 
     await expect(
-      getTinyFrontendModuleConfig({
-        tinyFrontendName: "MOCK_LIB_NAME",
-        contractVersion: "MOCK_LIB_VERSION",
+      getNanoFrontendModuleConfig({
+        name: "MOCK_LIB_NAME",
+        version: "MOCK_LIB_VERSION",
         hostname: "https://mock.hostname/api",
       })
     ).rejects.toEqual(
       new Error(
-        `Failed to fetch tiny frontend MOCK_LIB_NAME version MOCK_LIB_VERSION from API, with status ${status} and body ''`
+        `Failed to fetch nano frontend MOCK_LIB_NAME version MOCK_LIB_VERSION from API, with status ${status} and body ''`
       )
     );
   });
@@ -67,21 +67,21 @@ describe("[getTinyFrontendModuleConfig]", () => {
   it("should throw an error on invalid JSON", async () => {
     server.use(
       rest.get(
-        "https://mock.hostname/api/tiny/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
+        "https://mock.hostname/api/nano/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
         (_, res, ctx) =>
           res(ctx.status(200), ctx.text("THIS IS NOT VALID JSON"))
       )
     );
 
     await expect(
-      getTinyFrontendModuleConfig({
-        tinyFrontendName: "MOCK_LIB_NAME",
-        contractVersion: "MOCK_LIB_VERSION",
+      getNanoFrontendModuleConfig({
+        name: "MOCK_LIB_NAME",
+        version: "MOCK_LIB_VERSION",
         hostname: "https://mock.hostname/api",
       })
     ).rejects.toEqual(
       new Error(
-        `Failed to fetch tiny frontend MOCK_LIB_NAME version MOCK_LIB_VERSION from API, while getting JSON body`
+        `Failed to fetch nano frontend MOCK_LIB_NAME version MOCK_LIB_VERSION from API, while getting JSON body`
       )
     );
   });
@@ -90,7 +90,7 @@ describe("[getTinyFrontendModuleConfig]", () => {
     let count = 0;
     server.use(
       rest.get(
-        "https://mock.hostname/api/tiny/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
+        "https://mock.hostname/api/nano/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
         (_, res, ctx) => {
           if (count === 0) {
             count++;
@@ -101,15 +101,15 @@ describe("[getTinyFrontendModuleConfig]", () => {
             ctx.json({
               umdBundle: "mockBundle.js",
               cssBundle: "mockBundle.css",
-            } as TinyFrontendModuleConfig)
+            } as NanoFrontendModuleConfig)
           );
         }
       )
     );
 
-    const tinyFrontendModuleConfig = await getTinyFrontendModuleConfig({
-      tinyFrontendName: "MOCK_LIB_NAME",
-      contractVersion: "MOCK_LIB_VERSION",
+    const nanoFrontendModuleConfig = await getNanoFrontendModuleConfig({
+      name: "MOCK_LIB_NAME",
+      version: "MOCK_LIB_VERSION",
       hostname: "https://mock.hostname/api",
       retryPolicy: {
         maxRetries: 1,
@@ -117,16 +117,16 @@ describe("[getTinyFrontendModuleConfig]", () => {
       },
     });
 
-    expect(tinyFrontendModuleConfig).toEqual({
+    expect(nanoFrontendModuleConfig).toEqual({
       umdBundle: "mockBundle.js",
       cssBundle: "mockBundle.css",
     });
   });
 
   describe("when using cache", () => {
-    const mockGetTinyFrontendModuleConfigProps = {
-      tinyFrontendName: "MOCK_LIB_NAME",
-      contractVersion: "MOCK_LIB_VERSION",
+    const mockGetNanoFrontendModuleConfigProps = {
+      name: "MOCK_LIB_NAME",
+      version: "MOCK_LIB_VERSION",
       hostname: "https://mock.hostname/api",
     };
 
@@ -143,7 +143,7 @@ describe("[getTinyFrontendModuleConfig]", () => {
 
         server.use(
           rest.get(
-            "https://mock.hostname/api/tiny/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
+            "https://mock.hostname/api/nano/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
             (_, res, ctx) => {
               apiCallsCount++;
 
@@ -152,7 +152,7 @@ describe("[getTinyFrontendModuleConfig]", () => {
                 ctx.json({
                   umdBundle: "mockBundle.js",
                   cssBundle: "mockBundle.css",
-                } as TinyFrontendModuleConfig)
+                } as NanoFrontendModuleConfig)
               );
             }
           )
@@ -162,8 +162,8 @@ describe("[getTinyFrontendModuleConfig]", () => {
       describe("when called in parallel", () => {
         it("should reuse results", async () => {
           const [config1, config2] = await Promise.all([
-            getTinyFrontendModuleConfig(mockGetTinyFrontendModuleConfigProps),
-            getTinyFrontendModuleConfig(mockGetTinyFrontendModuleConfigProps),
+            getNanoFrontendModuleConfig(mockGetNanoFrontendModuleConfigProps),
+            getNanoFrontendModuleConfig(mockGetNanoFrontendModuleConfigProps),
           ]);
 
           expect(config1).toEqual(config2);
@@ -174,13 +174,13 @@ describe("[getTinyFrontendModuleConfig]", () => {
 
       describe("when called in sequence", () => {
         it("should reuse results", async () => {
-          const config1 = await getTinyFrontendModuleConfig(
-            mockGetTinyFrontendModuleConfigProps
+          const config1 = await getNanoFrontendModuleConfig(
+            mockGetNanoFrontendModuleConfigProps
           );
           expect(config1).toEqual(expectedModuleConfig);
 
-          const config2 = await getTinyFrontendModuleConfig(
-            mockGetTinyFrontendModuleConfigProps
+          const config2 = await getNanoFrontendModuleConfig(
+            mockGetNanoFrontendModuleConfigProps
           );
           expect(config2).toEqual(expectedModuleConfig);
 
@@ -192,15 +192,15 @@ describe("[getTinyFrontendModuleConfig]", () => {
 
       describe("when it has a ttl on the second call", () => {
         it("should expire after ttl has passed", async () => {
-          const config1 = await getTinyFrontendModuleConfig(
-            mockGetTinyFrontendModuleConfigProps
+          const config1 = await getNanoFrontendModuleConfig(
+            mockGetNanoFrontendModuleConfigProps
           );
           expect(config1).toEqual(expectedModuleConfig);
 
           await new Promise((resolve) => setTimeout(resolve, 20));
 
-          const config2 = await getTinyFrontendModuleConfig({
-            ...mockGetTinyFrontendModuleConfigProps,
+          const config2 = await getNanoFrontendModuleConfig({
+            ...mockGetNanoFrontendModuleConfigProps,
             cacheTtlInMs: 10,
           });
           expect(config2).toEqual(expectedModuleConfig);
@@ -214,9 +214,9 @@ describe("[getTinyFrontendModuleConfig]", () => {
       describe("when ttl is 0 on the second call", () => {
         it("should not use cache at all", async () => {
           const [config1, config2] = await Promise.all([
-            getTinyFrontendModuleConfig(mockGetTinyFrontendModuleConfigProps),
-            getTinyFrontendModuleConfig({
-              ...mockGetTinyFrontendModuleConfigProps,
+            getNanoFrontendModuleConfig(mockGetNanoFrontendModuleConfigProps),
+            getNanoFrontendModuleConfig({
+              ...mockGetNanoFrontendModuleConfigProps,
               cacheTtlInMs: 0,
             }),
           ]);
@@ -236,7 +236,7 @@ describe("[getTinyFrontendModuleConfig]", () => {
 
           server.use(
             rest.get(
-              "https://mock.hostname/api/tiny/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
+              "https://mock.hostname/api/nano/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
               (_, res, ctx) => {
                 apiCallsCount++;
                 return res(ctx.status(400));
@@ -244,11 +244,11 @@ describe("[getTinyFrontendModuleConfig]", () => {
             )
           );
 
-          const promise1 = getTinyFrontendModuleConfig(
-            mockGetTinyFrontendModuleConfigProps
+          const promise1 = getNanoFrontendModuleConfig(
+            mockGetNanoFrontendModuleConfigProps
           );
-          const promise2 = getTinyFrontendModuleConfig(
-            mockGetTinyFrontendModuleConfigProps
+          const promise2 = getNanoFrontendModuleConfig(
+            mockGetNanoFrontendModuleConfigProps
           );
 
           await expect(promise1).rejects.toBeDefined();
@@ -264,7 +264,7 @@ describe("[getTinyFrontendModuleConfig]", () => {
 
           server.use(
             rest.get(
-              "https://mock.hostname/api/tiny/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
+              "https://mock.hostname/api/nano/latest/MOCK_LIB_NAME/MOCK_LIB_VERSION",
               (_, res, ctx) => {
                 apiCallsCount++;
                 return res(ctx.status(400));
@@ -273,10 +273,10 @@ describe("[getTinyFrontendModuleConfig]", () => {
           );
 
           await expect(
-            getTinyFrontendModuleConfig(mockGetTinyFrontendModuleConfigProps)
+            getNanoFrontendModuleConfig(mockGetNanoFrontendModuleConfigProps)
           ).rejects.toBeDefined();
           await expect(
-            getTinyFrontendModuleConfig(mockGetTinyFrontendModuleConfigProps)
+            getNanoFrontendModuleConfig(mockGetNanoFrontendModuleConfigProps)
           ).rejects.toBeDefined();
 
           expect(apiCallsCount).toEqual(2);

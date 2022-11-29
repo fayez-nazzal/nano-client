@@ -1,4 +1,6 @@
-import "isomorphic-unfetch"; // Add global fetch
+import fetch from "cross-fetch"; // Import fetch implementation ( so it works also for nodejs - we need it for jest )
+
+global.fetch = fetch; // Set fetch as global fetch
 
 import { server } from "./src/mocks/server";
 
